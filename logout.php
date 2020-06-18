@@ -1,9 +1,7 @@
 <?php
 
-session_start();
+include 'functions/logout_user.php';
 
-if (isset($_SESSION['user'])) {
-    session_unset();
-    session_destroy();
-}
+logout_user();
+
 header('Location: connexion.php');

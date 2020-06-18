@@ -2,12 +2,9 @@
 
 session_start();
 
-// todo make better integration of HTML/PHP with include
 // todo display error messages at right place
 // todo enforce security of input (check mysqli real_escape_string)
 // todo add regex fields validation (check preg_match)
-// todo encrypt password (check password_hash($password, PASSWORD_DEFAULT);)
-// todo create session/cookie
 
 if (isset($_POST["signup"])) {
     // Form Signup variables
@@ -32,8 +29,10 @@ if (isset($_POST["signup"])) {
                 if ($userExistCheckQryExec->num_rows >= 1) {
                     echo "Cet identifiant est déjà utilisé.";
                 } else {
+                    // Encrypt password
+                    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
                     // Insert data in DB
-                    $userInsQry = "insert into moduleconnexion.utilisateurs (login, prenom, nom, password) VALUES ('$login', '$lastName', '$firstName', '$password')";
+                    $userInsQry = "insert into moduleconnexion.utilisateurs (login, prenom, nom, password) VALUES ('$login', '$lastName', '$firstName', '$passwordHash')";
                     $userInsQryExec = $db->query($userInsQry);
                     $db->close();
                     session_destroy();
@@ -50,7 +49,7 @@ if (isset($_POST["signup"])) {
 }
 
 if (!isset($_SESSION['user'])) {
-    include '_inscription.php';
+    include 'includes/_inscription.php';
 } elseif ($_SESSION['user']['login'] == 'admin') {
     header('Location: admin.php');
 } else {
